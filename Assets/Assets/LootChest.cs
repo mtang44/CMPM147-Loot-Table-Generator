@@ -1,68 +1,77 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using System;
+using System.IO;
 using System.Collections.Generic;
-class gameItem
+using UnityEngine;
+
+
+public class LootChest : MonoBehaviour
 {
-    public string rarity;
-    public string name;
-  
-   // public int quantity;
-    public string type;
-    public string description;
-    public gameItem(string name, string rarity, string type, string description)
+    void Start()
     {
-        this.name = name;
-        this.rarity = rarity;
-        this.type = type;
-        this.description = description;
+        LootChest.Main();
     }
-}
-class LootChest
-{
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+    public class gameItem 
+    {
+        public string rarity;
+        public string name;
+        // public int quantity;
+        public string type;
+        public string description;
+        public gameItem(string name, string rarity, string type, string description)
+        {
+            this.name = name;
+            this.rarity = rarity;
+            this.type = type;
+            this.description = description;
+        }
+    }
     public List<gameItem> drops = new List<gameItem>(); // look into changing into a dictionary in order to group by quantity
     //LootRarities defines the rarity of the items dropped from the chest with the number corresponding 
     //to their frequency of being selected.
     Dictionary <string, int> lootRarities = new  Dictionary<string, int>();
     Dictionary <string, List<gameItem>> lootTable = new Dictionary<string, List<gameItem>>();
     
-    public static void Main(string[] args)
+    public static void Main()
     {      
         LootChest chest = new LootChest();
         LootChest customChest = new LootChest();
-        chest.lootTable = chest.insertCustomLootTable("LootDrops.csv"); // change file path for custom loot tables
-        chest.lootRarities = chest.insertCustomRarities("Rarity_Weight.csv"); // change file path for custom rarities/weights
+        chest.lootTable = chest.insertCustomLootTable("Assets/Assets/Loot Table .csv Files/LootDrops.csv"); // change file path for custom loot tables
+        chest.lootRarities = chest.insertCustomRarities("Assets/Assets/Loot Table .csv Files/Rarity_Weight.csv"); // change file path for custom rarities/weights
 
-        customChest.lootTable = customChest.insertCustomLootTable("Custom_Loot_Rarities.csv");
-        customChest.lootRarities = customChest.insertCustomRarities("Custom_Rarities_Weight.csv");
-        for(int i = 1; i < 10; i++) // ten outputs not needed after
-        {
-            Random rand = new Random();
+        // customChest.lootTable = customChest.insertCustomLootTable("Assets/Assets/Loot Table .csv Files/Custom_Loot_Rarities.csv");
+        // customChest.lootRarities = customChest.insertCustomRarities("Assets/Assets/Loot Table .csv Files/Custom_Rarities_Weight.csv");
+        
+            System.Random rand = new System.Random();
             int randomOutput = rand.Next(0,10);
             chest.drops = chest.GenerateLoot(chest.lootRarities, randomOutput);
           
-            Console.WriteLine("==============================");
-            Console.WriteLine("Output " + i + ": Dropping Loot Chest: with " + randomOutput + " rolls " );
+            Debug.Log("==============================");
+            Debug.Log("Output: Dropping Loot Chest: with " + randomOutput + " rolls " );
             foreach(var drop in chest.drops)
             {
 
-                Console.WriteLine("- 1 " + drop.name + " (" + drop.rarity + "): " + drop.type);
+                Debug.Log("- 1 " + drop.name + " (" + drop.rarity + "): " + drop.type);
 
             }   
-        }
-        for(int i = 11; i < 21; i++) // ten outputs not needed after
-        {
-            Random rand = new Random();
-            int randomOutput = rand.Next(0,10);
-            customChest.drops = customChest.GenerateLoot(customChest.lootRarities, randomOutput);
-            Console.WriteLine("==============================");
-            Console.WriteLine("Output " + i + ": Dropping Custom Loot Chest: with " + randomOutput + " rolls " );
-            foreach(var customDrop in customChest.drops)
-            {
+            // System.Random rand = new System.Random();
+            // int randomOutput = rand.Next(0,10);
+            // customChest.drops = customChest.GenerateLoot(customChest.lootRarities, randomOutput);
+            // Debug.Log("==============================");
+            // Debug.Log("Output " + i + ": Dropping Custom Loot Chest: with " + randomOutput + " rolls " );
+            // foreach(var customDrop in customChest.drops)
+            // {
 
-                Console.WriteLine("- 1 " + customDrop.name + " (" + customDrop.rarity + "): " + customDrop.type);
+            //     Debug.Log("- 1 " + customDrop.name + " (" + customDrop.rarity + "): " + customDrop.type);
 
-            }
-        }
+            // }
+        
     }
     public Dictionary<string, int> insertCustomRarities(string filePath)
     {
@@ -89,7 +98,7 @@ class LootChest
         }
         else
         {
-            Console.WriteLine("Error: File not found.");
+            Debug.Log("Error: File not found.");
             return customRarities;
         }
         
@@ -134,7 +143,7 @@ class LootChest
         }
         else
         {
-            Console.WriteLine("Error: File not found.");
+            Debug.Log("Error: File not found.");
             return customLootTable;
         }
     }
@@ -144,7 +153,7 @@ class LootChest
     {
         Dictionary <string, int> selectedRarity = new Dictionary<string, int>();
         List<gameItem> selectedItems = new List<gameItem>();
-        Random rand = new Random();
+        System.Random rand = new System.Random();
         int weightedSum = 0;
 
         // Initialize selectedRarity dictionary and calculate weighted sum of rarities
@@ -156,7 +165,7 @@ class LootChest
         //check if weight sum is 0 
         if(weightedSum <= 0) 
         {
-            Console.WriteLine("Error: No loot available.");
+            Debug.Log("Error: No loot available.");
             return selectedItems;
         }
 
