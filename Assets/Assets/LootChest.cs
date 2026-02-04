@@ -3,21 +3,56 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
-
-
+using UnityEngine.UI;   
+using Unity.VisualScripting;
+using UnityEditorInternal;
+using System.Xml;
+using System.Collections;
 public class LootChest : MonoBehaviour
 {
-    
+    [SerializeField]
+    public string Loot_Table_File_Path;
+    [SerializeField]    
+    public int lootCount = 1;
+   
+   [SerializeField]
+   public string[] Rarities = new string[] {"Common","Uncommon","Rare","Epic","Legendary"};
+
+   [SerializeField]
+   public int[] Rarity_Weights = new int[] {55,30,15,6,1};
+     
+     [SerializeField]
+   public Button GenerateBTN;
+
     void Start()
     {
-        LootChest.Main();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
+        Button btn = GenerateBTN.GetComponent<Button>();
+		btn.onClick.AddListener(TaskOnClick);
+        
         
     }
+
+    void TaskOnClick(){
+        LootChest chest = new LootChest();
+        GetComponent<Animation>().Play();
+        chest.lootCount = lootCount;
+        chest.lootTable = chest.insertCustomLootTable(Loot_Table_File_Path); // change file path for custom loot tables
+        chest.lootRarities = chest.insertCustomRarities(Rarities, Rarity_Weights); // 
+		chest.drops = chest.GenerateLoot(chest.lootRarities, chest.lootCount);
+        
+        Debug.Log("==============================");
+        Debug.Log("Output: Dropping Loot Chest: with " + chest.lootCount + " Drops " );
+        foreach(var drop in chest.drops)
+        {
+
+            Debug.Log("- 1 " + drop.name + " (" + drop.rarity + "): " + drop.type);
+
+        }   
+	}
+
+
+    // Update is called once per frame
+
     public class gameItem 
     {
         public string rarity;
@@ -39,70 +74,21 @@ public class LootChest : MonoBehaviour
     Dictionary <string, int> lootRarities = new  Dictionary<string, int>();
     Dictionary <string, List<gameItem>> lootTable = new Dictionary<string, List<gameItem>>();
     
-    public static void Main()
-    {      
-        LootChest chest = new LootChest();
-        //LootChest customChest = new LootChest();
-        chest.lootTable = chest.insertCustomLootTable("Assets/Assets/Loot Table .csv Files/LootDrops.csv"); // change file path for custom loot tables
-        chest.lootRarities = chest.insertCustomRarities("Assets/Assets/Loot Table .csv Files/Rarity_Weight.csv"); // change file path for custom rarities/weights
-
-        // customChest.lootTable = customChest.insertCustomLootTable("Assets/Assets/Loot Table .csv Files/Custom_Loot_Rarities.csv");
-        // customChest.lootRarities = customChest.insertCustomRarities("Assets/Assets/Loot Table .csv Files/Custom_Rarities_Weight.csv");
-        
-            System.Random rand = new System.Random();
-            int randomOutput = rand.Next(0,10);
-            chest.drops = chest.GenerateLoot(chest.lootRarities, randomOutput);
-          
-            Debug.Log("==============================");
-            Debug.Log("Output: Dropping Loot Chest: with " + randomOutput + " rolls " );
-            foreach(var drop in chest.drops)
-            {
-
-                Debug.Log("- 1 " + drop.name + " (" + drop.rarity + "): " + drop.type);
-
-            }   
-            // System.Random rand = new System.Random();
-            // int randomOutput = rand.Next(0,10);
-            // customChest.drops = customChest.GenerateLoot(customChest.lootRarities, randomOutput);
-            // Debug.Log("==============================");
-            // Debug.Log("Output " + i + ": Dropping Custom Loot Chest: with " + randomOutput + " rolls " );
-            // foreach(var customDrop in customChest.drops)
-            // {
-
-            //     Debug.Log("- 1 " + customDrop.name + " (" + customDrop.rarity + "): " + customDrop.type);
-
-            // }
-        
-    }
-    public Dictionary<string, int> insertCustomRarities(string filePath)
+   
+    public Dictionary<string, int> insertCustomRarities(string[] rarities, int[]weights)
     {
-        string path = filePath;
-        StreamReader reader;
+     
         Dictionary<string, int> customRarities = new Dictionary<string, int>();
-        if(File.Exists(path))
+        if(rarities.Length != weights.Length)
         {
-            reader = new StreamReader(File.OpenRead(path));
-            if(!reader.EndOfStream)
-            {
-                reader.ReadLine(); // skip header line
-            }
-            while(!reader.EndOfStream)
-            {
-                var line = reader.ReadLine();
-                var values = line.Split(',');
-                string rarityName = values[0];
-                int rarityWeight = Int32.Parse(values[1]);
-                customRarities.Add(rarityName, rarityWeight);
-            }
-            reader.Close();
+            Debug.LogError("ERROR Rarity Categories and Rarity Weights of unequal size"); // error caused by inspector rarities and rarity weights being mismatched
             return customRarities;
         }
-        else
+        for(int i = 0; i < rarities.Length; i++)
         {
-            Debug.Log("Error: File not found.");
-            return customRarities;
+            customRarities.Add(rarities[i],weights[i]);
         }
-        
+        return customRarities;
     }
 
     //Takes in .csv file path and parses it into a custom loot table dictionary
