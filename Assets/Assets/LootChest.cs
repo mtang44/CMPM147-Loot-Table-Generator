@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class LootChest : MonoBehaviour
 {
+    
     void Start()
     {
         LootChest.Main();
@@ -41,7 +42,7 @@ public class LootChest : MonoBehaviour
     public static void Main()
     {      
         LootChest chest = new LootChest();
-        LootChest customChest = new LootChest();
+        //LootChest customChest = new LootChest();
         chest.lootTable = chest.insertCustomLootTable("Assets/Assets/Loot Table .csv Files/LootDrops.csv"); // change file path for custom loot tables
         chest.lootRarities = chest.insertCustomRarities("Assets/Assets/Loot Table .csv Files/Rarity_Weight.csv"); // change file path for custom rarities/weights
 
