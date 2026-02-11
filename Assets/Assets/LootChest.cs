@@ -9,6 +9,9 @@ using UnityEditorInternal;
 using System.Xml;
 using System.Collections;
 using TMPro;
+using UnityEditorInternal.Profiling.Memory.Experimental;
+using System.Text.Json;
+using UnityEditor;
 public class LootChest : MonoBehaviour
 {
     [SerializeField]
@@ -19,7 +22,7 @@ public class LootChest : MonoBehaviour
     [SerializeField]  
     public int lootCount = 1;
     [SerializeField]
-    public bool allowRegeneration = false; public bool printToFile;
+    public bool allowRegeneration = false; public bool OutputToFile;
     [SerializeField]
     public string[] Rarities = new string[] {"Common","Uncommon","Rare","Epic","Legendary"};
     [SerializeField]
@@ -41,6 +44,7 @@ public class LootChest : MonoBehaviour
         Chest_OutputUI.SetActive(false);
     }
 
+    // call this function to open chest 
     public void Open(){
 
         // generates a new chest with loot if 1: chest has not been opened 2: chest allows for regeneration of loot upon open
@@ -92,18 +96,31 @@ public class LootChest : MonoBehaviour
     // Returns a new chest object with attached loot table paramaters attached. 
     public LootChest LootChestGeneration(LootChest chest)
     {
+        List<List<gameItem>> batchDrops = new List<List<gameItem>>();
             chest.lootCount = lootCount;
             chest.lootTable = chest.insertCustomLootTable(LootTableFilePath); // change file path for custom loot tables
             chest.lootRarities = chest.insertCustomRarities(Rarities, Rarity_Weights); 
             for(int i = 0; i < BatchGenerationCount; i++)
             {
                 chest.drops = chest.GenerateLoot(chest.lootRarities, chest.lootCount);
+                if(OutputToFile)
+                {
+                    batchDrops.Add(chest.drops);
+                }
                // inset some output to .csv file
+            }
+            if(OutputToFile)
+            {
+                //outputToJSON(batchDrops);
             }
         return chest;
             
     } 
-        // display output to TMP text
+    public void outputToJSON(List<List<gameItem>> batchDrops, string filePath)
+    {
+       
+    }
+        // Takes in a LootChest and displays it's generated loot to the Unity UI 
     public void displayOutput(LootChest currentChest)
     {
         string output = "";
@@ -114,6 +131,7 @@ public class LootChest : MonoBehaviour
         }   
         Chest_Output_TMP.text = output; 
     }
+    // This function allows for custom rarities that correspond to the loot table .csv file's rarities, as well as the corresponding weights of each rarity. 
     public Dictionary<string, int> insertCustomRarities(string[] rarities, int[]weights)
     {
      
@@ -131,6 +149,7 @@ public class LootChest : MonoBehaviour
     }
 
     //Takes in .csv file path and parses it into a custom loot table dictionary
+    // outputs a dictionary storing the string of the rarity category, and a list of objects that exist within that rarity
     public Dictionary<string, List<gameItem>> insertCustomLootTable(string filePath)
     {
         string path = filePath;
@@ -174,6 +193,7 @@ public class LootChest : MonoBehaviour
         }
     }
     
+    // This is the main function that generates the loot from the loot table. 
     // GenerateLoot takes in an integer lootCount which defines how many items to generate from the loot table, and a Dictionary <string, int> for custom rarities. 
     public List<gameItem> GenerateLoot(Dictionary<string, int> myRarity, int lootCount = 1 ) //
     {
