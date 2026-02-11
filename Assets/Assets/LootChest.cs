@@ -12,6 +12,8 @@ using TMPro;
 using UnityEditorInternal.Profiling.Memory.Experimental;
 using System.Text.Json;
 using UnityEditor;
+
+
 public class LootChest : MonoBehaviour
 {
     [SerializeField]
@@ -31,6 +33,8 @@ public class LootChest : MonoBehaviour
     public Button GenerateBTN;
     [SerializeField]
     public TextMeshProUGUI Chest_Output_TMP;
+    [SerializeField]
+    public string OutputPath;
     [SerializeField]
     public GameObject Chest_OutputUI;
     private bool alreadyGenerated;
@@ -111,14 +115,46 @@ public class LootChest : MonoBehaviour
             }
             if(OutputToFile)
             {
-                //outputToJSON(batchDrops);
+                outputToFile(OutputPath, batchDrops);
             }
         return chest;
             
     } 
-    public void outputToJSON(List<List<gameItem>> batchDrops, string filePath)
+    public void outputToFile(string filePath, List<List<gameItem>> batchDrops)
     {
-       
+        
+        StreamWriter writer;
+        int count = 1;
+        if(File.Exists(filePath))
+        {
+            
+            writer = new StreamWriter(filePath, false);
+            foreach(var chestDrop in batchDrops)
+            {
+                writer.Write("Chest " + count + ": {");
+
+                   for (int i = 0; i < chestDrop.Count; i++)
+                    {
+                    writer.Write(chestDrop[i].name);
+
+                    if (i < chestDrop.Count - 1)
+                    {
+                        writer.Write(", ");
+                    }
+                            
+                    }
+                writer.Write("}");
+                writer.WriteLine();
+                count++;
+            }
+            
+            writer.Close();
+        } 
+        else
+        {
+            Debug.LogError("Error: Output File not found.");
+        }
+
     }
         // Takes in a LootChest and displays it's generated loot to the Unity UI 
     public void displayOutput(LootChest currentChest)
@@ -188,7 +224,7 @@ public class LootChest : MonoBehaviour
         }
         else
         {
-            Debug.Log("Error: File not found.");
+            Debug.LogError("Error: File not found.");
             return customLootTable;
         }
     }

@@ -1130,10 +1130,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LootTableFilePath: Assets/Assets/Loot Table .csv Files/LootDrops.csv
-  BatchGenerationCount: 1
+  BatchGenerationCount: 4
   lootCount: 5
   allowRegeneration: 1
-  OutputToFile: 0
+  OutputToFile: 1
   Rarities:
   - Common
   - Uncommon
@@ -1143,6 +1143,7 @@ MonoBehaviour:
   Rarity_Weights: 370000001e0000000f0000000600000001000000
   GenerateBTN: {fileID: 938046800}
   Chest_Output_TMP: {fileID: 445203603}
+  OutputPath: Assets/BatchGenerationOutput.txt
   Chest_OutputUI: {fileID: 139778977}
 --- !u!4 &1138728820 stripped
 Transform:
