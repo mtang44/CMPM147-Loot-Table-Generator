@@ -8,49 +8,62 @@ using Unity.VisualScripting;
 using UnityEditorInternal;
 using System.Xml;
 using System.Collections;
+using TMPro;
 public class LootChest : MonoBehaviour
 {
     [SerializeField]
-    public string Loot_Table_File_Path;
-    [SerializeField]    
+    public string LootTableFilePath;
+    
+    [SerializeField]  
+    public int BatchGenerationCount = 1;
+    [SerializeField]  
     public int lootCount = 1;
-   
-   [SerializeField]
-   public string[] Rarities = new string[] {"Common","Uncommon","Rare","Epic","Legendary"};
-
-   [SerializeField]
-   public int[] Rarity_Weights = new int[] {55,30,15,6,1};
-     
-     [SerializeField]
-   public Button GenerateBTN;
+    [SerializeField]
+    public bool allowRegeneration = false; public bool printToFile;
+    [SerializeField]
+    public string[] Rarities = new string[] {"Common","Uncommon","Rare","Epic","Legendary"};
+    [SerializeField]
+    public int[] Rarity_Weights = new int[] {55,30,15,6,1};
+    [SerializeField]
+    public Button GenerateBTN;
+    [SerializeField]
+    public TextMeshProUGUI Chest_Output_TMP;
+    [SerializeField]
+    public GameObject Chest_OutputUI;
+    private bool alreadyGenerated;
+    private LootChest myChest;
 
     void Start()
     {
         Button btn = GenerateBTN.GetComponent<Button>();
-		btn.onClick.AddListener(TaskOnClick);
-        
-        
+        myChest = new LootChest();
+		btn.onClick.AddListener(Open);
+        Chest_OutputUI.SetActive(false);
     }
 
-    void TaskOnClick(){
-        LootChest chest = new LootChest();
-        GetComponent<Animation>().Play();
-        chest.lootCount = lootCount;
-        chest.lootTable = chest.insertCustomLootTable(Loot_Table_File_Path); // change file path for custom loot tables
-        chest.lootRarities = chest.insertCustomRarities(Rarities, Rarity_Weights); // 
-		chest.drops = chest.GenerateLoot(chest.lootRarities, chest.lootCount);
-        
-        Debug.Log("==============================");
-        Debug.Log("Output: Dropping Loot Chest: with " + chest.lootCount + " Drops " );
-        foreach(var drop in chest.drops)
+    public void Open(){
+
+        // generates a new chest with loot if 1: chest has not been opened 2: chest allows for regeneration of loot upon open
+        // else display existing chest's already generated loot 
+
+        if(!alreadyGenerated || allowRegeneration)
         {
-
-            Debug.Log("- 1 " + drop.name + " (" + drop.rarity + "): " + drop.type);
-
-        }   
+            Debug.Log("New chest created");
+            myChest = LootChestGeneration(myChest);
+            alreadyGenerated = true;
+            GetComponent<Animation>().Play();
+            displayOutput(myChest);
+            
+        }
+        else
+        {
+            Debug.Log("Chest already Exists");
+            displayOutput(myChest);
+        }
+        
 	}
 
-
+    
     // Update is called once per frame
 
     public class gameItem 
@@ -75,6 +88,32 @@ public class LootChest : MonoBehaviour
     Dictionary <string, List<gameItem>> lootTable = new Dictionary<string, List<gameItem>>();
     
    
+
+    // Returns a new chest object with attached loot table paramaters attached. 
+    public LootChest LootChestGeneration(LootChest chest)
+    {
+            chest.lootCount = lootCount;
+            chest.lootTable = chest.insertCustomLootTable(LootTableFilePath); // change file path for custom loot tables
+            chest.lootRarities = chest.insertCustomRarities(Rarities, Rarity_Weights); 
+            for(int i = 0; i < BatchGenerationCount; i++)
+            {
+                chest.drops = chest.GenerateLoot(chest.lootRarities, chest.lootCount);
+               // inset some output to .csv file
+            }
+        return chest;
+            
+    } 
+        // display output to TMP text
+    public void displayOutput(LootChest currentChest)
+    {
+        string output = "";
+        Chest_OutputUI.SetActive(true);
+        foreach(var drop in currentChest.drops)
+        {
+            output += "1 x ("  + drop.rarity + ") " +  drop.name + "\n" ;
+        }   
+        Chest_Output_TMP.text = output; 
+    }
     public Dictionary<string, int> insertCustomRarities(string[] rarities, int[]weights)
     {
      
@@ -200,4 +239,11 @@ public class LootChest : MonoBehaviour
         }   
         return selectedItems;
     }
+
+    // closes the Chest's UI output Window
+    public void closeOutputWindow()
+{
+    Chest_OutputUI.SetActive(false);
 }
+}
+
