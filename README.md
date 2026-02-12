@@ -47,7 +47,7 @@ This tool allows the user to import a custom .csv loot table file that can be ch
 
 <img width="702" height="633" alt="image" src="https://github.com/user-attachments/assets/79751c5d-8db8-44f0-8e4b-bc73d1b1c590" />
 
-##**Limitations:**
+## **Limitations:**
 
 If multiple chest assets are placed around a map, all chests will open and generate loot simultaneously. It is up to the user to figure out how to access the chest the player wants to use. To open a chest call the chest's Open() function. 
 
