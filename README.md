@@ -26,7 +26,12 @@ contents
 
 This tool allows the user to import a custom .csv loot table file that can be changed as needed. The list of items, the name of the rarities, and 
 
-**Limitations: **
+**Example Outputs**
+Example 1: <img width="915" height="637" alt="image" src="https://github.com/user-attachments/assets/a78c8e37-44be-40ba-a31b-589154a240eb" />
+
+Example 2: <img width="702" height="633" alt="image" src="https://github.com/user-attachments/assets/79751c5d-8db8-44f0-8e4b-bc73d1b1c590" />
+
+**Limitations:**
 The Loot chest does not have functionality to take items from the chest. The chest stores the loot and displays it to the user. This functionality will need to be added by the user by accessing the chest's drops. 
 
 The Loot chest does not accomodate for changes made to the format of the additional item categories in the .csv file. Any addition of new item stat categories will also need to be manually adjusted within insertCustomLootTable(). 
