@@ -1,15 +1,15 @@
 # CMPM147-Loot-Table-Generator
 
-# **Tool Explanation:**
+## **Tool Explanation:**
 
 This tool provides a Unity Loot Chest package that can be placed in a 3D    space any number of times. Upon opening, the chest will procedurally generate Loot Drops from a weighted, customizable loot table and display the outputs to a Unity UI Canvas. 
 
-# **How to Import in Project**
+## **How to Import in Project**
 
-# **How to Use**
+## **How to Use**
 Place the loot chest in the desired spot in the Unity scene. The chest prefab will automatically have default values attached, which can be changed as desired. A Unity UI button has been provided to showcase how to generate loot. However, this button is only for testing the generation of loot. To open a chest, call the current chest's Open() function. This function will begin the generation of the chest's loot, automatically opening up a UI output screen with the loot. To close the chest's Output UI screen, call the closeOutputWindow() function. 
 
-Example of a call to open a chest: 
+### Example of a call to open a chest: 
 ```
 
  if (Input.GetKeyDown(KeyCode.E))
@@ -26,7 +26,7 @@ Example of a call to open a chest:
 
 
 
-# **Parameter Explanation**
+## **Parameter Explanation**
 This tool incorporates a variety of adjustable parameters that can be edited through the Chest's Inspector tab in Unity. 
 
 1: Custom Loot Table .csv Pathway
@@ -42,12 +42,12 @@ contents
 
 This tool allows the user to import a custom .csv loot table file that can be changed as needed. The list of items, the name of the rarities, and 
 
-**Example Outputs**
-Example 1: <img width="915" height="637" alt="image" src="https://github.com/user-attachments/assets/a78c8e37-44be-40ba-a31b-589154a240eb" />
+##**Example Outputs**
+<img width="915" height="637" alt="image" src="https://github.com/user-attachments/assets/a78c8e37-44be-40ba-a31b-589154a240eb" />
 
-Example 2: <img width="702" height="633" alt="image" src="https://github.com/user-attachments/assets/79751c5d-8db8-44f0-8e4b-bc73d1b1c590" />
+<img width="702" height="633" alt="image" src="https://github.com/user-attachments/assets/79751c5d-8db8-44f0-8e4b-bc73d1b1c590" />
 
-**Limitations:**
+##**Limitations:**
 
 If multiple chest assets are placed around a map, all chests will open and generate loot simultaneously. It is up to the user to figure out how to access the chest the player wants to use. To open a chest call the chest's Open() function. 
 
