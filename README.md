@@ -7,6 +7,7 @@ This tool provides a Unity Loot Chest package that can be placed in a 3D    spac
 ## **How to Import in Project**
 
 ## **How to Use**
+
 Place the loot chest in the desired spot in the Unity scene. The chest prefab will automatically have default values attached, which can be changed as desired. A Unity UI button has been provided to showcase how to generate loot. However, this button is only for testing the generation of loot. To open a chest, call the current chest's Open() function. This function will begin the generation of the chest's loot, automatically opening up a UI output screen with the loot. To close the chest's Output UI screen, call the closeOutputWindow() function. 
 
 ### Example of a call to open a chest: 
@@ -24,7 +25,29 @@ Place the loot chest in the desired spot in the Unity scene. The chest prefab wi
 }
 ```
 
+### How to Import Custom Loot Tables:
+To import a custom loot table, open the provided Loot Table .csv file. In the .csv file, you will find a spreadsheet which allows you to fill out customloot attributes. Loot Rarities, Item Names, Item Type, and Item Description can all be filled in just using the spreadsheet. The .csv file should already be attached to the loot chest, but in the event it is not, copy the path of the file from the Unity folder and paste that into the "Loot Table File Path" input field in the Chest Inspector
 
+#### <img width="902" height="225" alt="image" src="https://github.com/user-attachments/assets/b4436ea0-2277-46bf-b67a-f19d018dc69e" />
+
+If you are using custom loot rarities other than the default rarities: "Common, Uncommon, Rare...etc.", make sure to also change the names of the Rarities in the inspector field to match any custom rarities assigned in the loot table csv file. It is important to note that each Rarity in the Rarities List directly corresponds to the Rarity Weight List. (Rarity's Element 0 is attached to Rarity_Weight's Element 0). 
+
+
+<img width="908" height="517" alt="image" src="https://github.com/user-attachments/assets/53f2ae56-c1ee-4555-937a-bbc557411c6d" />
+
+It is also important to note that the weights do not have to add up to 100% or even 100. The weights use a ratio-based weighing system where the higher the number, the higher the chances of it spawning. When changing the rarity weights, make sure that they are listed in descending order from highest to lowest. Otherwise, this will result in altered loot drop rates. 
+
+```
+Using the image above: 55 + 30 + 15 + 6 + 1 = 107.
+
+Common = 55/107 = .51 or a ~51% spawn chance
+Uncommon = 30/107 = .28 or ~28$ spawn chance
+Rare = 15/107 = .14 or ~14% spawn chance
+Epic = 6/107 = .05 or ~5% spawn chance
+Legendary = 1/107 = .009 or ~ <1% spawn chance
+
+```
+This ensures that inserting a new weight doesn't force all other weights to have to be changed aswell. 
 
 ## **Parameter Explanation**
 This tool incorporates a variety of adjustable parameters that can be edited through the Chest's Inspector tab in Unity. 
