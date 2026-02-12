@@ -1,16 +1,32 @@
 # CMPM147-Loot-Table-Generator
 
-**Tool Explanation:**
+# **Tool Explanation:**
 
 This tool provides a Unity Loot Chest package that can be placed in a 3D    space any number of times. Upon opening, the chest will procedurally generate Loot Drops from a weighted, customizable loot table and display the outputs to a Unity UI Canvas. 
 
-**How to Import in Project**
+# **How to Import in Project**
 
-**How to Use**
-Place the loot chest in the desired spot in the Unity scene. The chest prefab will automatically have default values attached, which can be changed as desired. Upon runtime, the loot chest contains a UI canvas that has a button to open the chest. Clicking the button will automatically generate the loot drops for the chest from the loot table and display the contents to a Unity UI screen. 
+# **How to Use**
+Place the loot chest in the desired spot in the Unity scene. The chest prefab will automatically have default values attached, which can be changed as desired. A Unity UI button has been provided to showcase how to generate loot. However, this button is only for testing the generation of loot. To open a chest, call the current chest's Open() function. This function will begin the generation of the chest's loot, automatically opening up a UI output screen with the loot. To close the chest's Output UI screen, call the closeOutputWindow() function. 
+
+Example of a call to open a chest: 
+```
+
+ if (Input.GetKeyDown(KeyCode.E))
+{
+    if(!alreadyInChest){
+        currentChest.Open();
+        alreadyInChest = true;
+    }else{
+        alreadyInChest = false;
+        CurrentChest.closeOutputWindow();
+        }
+}
+```
 
 
-**Parameter Explanation**
+
+# **Parameter Explanation**
 This tool incorporates a variety of adjustable parameters that can be edited through the Chest's Inspector tab in Unity. 
 
 1: Custom Loot Table .csv Pathway
@@ -32,6 +48,9 @@ Example 1: <img width="915" height="637" alt="image" src="https://github.com/use
 Example 2: <img width="702" height="633" alt="image" src="https://github.com/user-attachments/assets/79751c5d-8db8-44f0-8e4b-bc73d1b1c590" />
 
 **Limitations:**
+
+If multiple chest assets are placed around a map, all chests will open and generate loot simultaneously. It is up to the user to figure out how to access the chest the player wants to use. To open a chest call the chest's Open() function. 
+
 The Loot chest does not have functionality to take items from the chest. The chest stores the loot and displays it to the user. This functionality will need to be added by the user by accessing the chest's drops. 
 
 The Loot chest does not accomodate for changes made to the format of the additional item categories in the .csv file. Any addition of new item stat categories will also need to be manually adjusted within insertCustomLootTable(). 
