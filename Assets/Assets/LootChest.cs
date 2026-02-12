@@ -13,7 +13,6 @@ using UnityEditorInternal.Profiling.Memory.Experimental;
 using System.Text.Json;
 using UnityEditor;
 
-
 public class LootChest : MonoBehaviour
 {
     [SerializeField]
@@ -24,7 +23,7 @@ public class LootChest : MonoBehaviour
     [SerializeField]  
     public int lootCount = 1;
     [SerializeField]
-    public bool allowRegeneration = false; public bool OutputToFile;
+    public bool allowChestRegeneration = false; public bool OutputToFile;
     [SerializeField]
     public string[] Rarities = new string[] {"Common","Uncommon","Rare","Epic","Legendary"};
     [SerializeField]
@@ -37,6 +36,7 @@ public class LootChest : MonoBehaviour
     public string OutputPath;
     [SerializeField]
     public GameObject Chest_OutputUI;
+    public bool inChest = false;
     private bool alreadyGenerated;
     private LootChest myChest;
 
@@ -47,6 +47,23 @@ public class LootChest : MonoBehaviour
 		btn.onClick.AddListener(Open);
         Chest_OutputUI.SetActive(false);
     }
+    void Update()
+    {
+        
+        // if (Input.GetKeyDown(KeyCode.E))
+        // {
+        //     if(!inChest)
+        //     {
+        //         Open();
+        //         inChest = true;
+        //     }
+        //     else
+        //     {
+        //         inChest = false;
+        //         closeOutputWindow();
+        //     }
+        // }
+    }
 
     // call this function to open chest 
     public void Open(){
@@ -54,12 +71,17 @@ public class LootChest : MonoBehaviour
         // generates a new chest with loot if 1: chest has not been opened 2: chest allows for regeneration of loot upon open
         // else display existing chest's already generated loot 
 
-        if(!alreadyGenerated || allowRegeneration)
+        if(!alreadyGenerated || allowChestRegeneration)
         {
             Debug.Log("New chest created");
             myChest = LootChestGeneration(myChest);
+           
+            if(!alreadyGenerated)
+            {
+                GetComponent<Animation>().Play();
+            }
             alreadyGenerated = true;
-            GetComponent<Animation>().Play();
+           
             displayOutput(myChest);
         }
         else
@@ -119,18 +141,15 @@ public class LootChest : MonoBehaviour
             outputToFile(OutputPath, batchDrops);
         }
         return chest;
-            
     }
     // Takes in a list of chests outputs, where each chest output is stored as a List of gameItems and overwrites them into filePath
     // List<List<gameItems> allows for batch generation output 
     public void outputToFile(string filePath, List<List<gameItem>> batchDrops)
     {
-        
         StreamWriter writer;
         int count = 1;
         if(File.Exists(filePath))
         {
-            
             writer = new StreamWriter(filePath, false);
             foreach(var chestDrop in batchDrops)
             {
@@ -150,7 +169,6 @@ public class LootChest : MonoBehaviour
                 writer.WriteLine();
                 count++;
             }
-            
             writer.Close();
         } 
         else
@@ -303,7 +321,9 @@ public class LootChest : MonoBehaviour
     // closes the Chest's UI output Window
     public void closeOutputWindow()
     {
+        
         Chest_OutputUI.SetActive(false);
+        
     }
 }
 
