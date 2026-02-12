@@ -1130,10 +1130,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LootTableFilePath: Assets/Assets/Loot Table .csv Files/LootDrops.csv
-  BatchGenerationCount: 4
+  BatchGenerationCount: 1
   lootCount: 5
   allowRegeneration: 1
-  OutputToFile: 1
+  OutputToFile: 0
   Rarities:
   - Common
   - Uncommon

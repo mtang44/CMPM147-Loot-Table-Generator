@@ -61,7 +61,6 @@ public class LootChest : MonoBehaviour
             alreadyGenerated = true;
             GetComponent<Animation>().Play();
             displayOutput(myChest);
-            
         }
         else
         {
@@ -70,10 +69,7 @@ public class LootChest : MonoBehaviour
         }
         
 	}
-
-    
-    // Update is called once per frame
-
+    // c# object that stores data about object created in csv file
     public class gameItem 
     {
         public string rarity;
@@ -89,37 +85,44 @@ public class LootChest : MonoBehaviour
             this.description = description;
         }
     }
-    public List<gameItem> drops = new List<gameItem>(); // look into changing into a dictionary in order to group by quantity
-    //LootRarities defines the rarity of the items dropped from the chest with the number corresponding 
-    //to their frequency of being selected.
+    public List<gameItem> drops = new List<gameItem>();
     Dictionary <string, int> lootRarities = new  Dictionary<string, int>();
     Dictionary <string, List<gameItem>> lootTable = new Dictionary<string, List<gameItem>>();
     
    
 
-    // Returns a new chest object with attached loot table paramaters attached. 
+    /* Returns a new chest instance with attached loot table paramaters. 
+        If loot chest has not yet been generated, read from loot table csv and attach corresponding rarity weights.
+       
+
+        
+    */
     public LootChest LootChestGeneration(LootChest chest)
     {
         List<List<gameItem>> batchDrops = new List<List<gameItem>>();
+        if(!alreadyGenerated) //  This prevents a lootchest from having to reread the csv file every time it generates new loot
+        {
             chest.lootCount = lootCount;
-            chest.lootTable = chest.insertCustomLootTable(LootTableFilePath); // change file path for custom loot tables
+            chest.lootTable = chest.insertCustomLootTable(LootTableFilePath);
             chest.lootRarities = chest.insertCustomRarities(Rarities, Rarity_Weights); 
-            for(int i = 0; i < BatchGenerationCount; i++)
-            {
-                chest.drops = chest.GenerateLoot(chest.lootRarities, chest.lootCount);
-                if(OutputToFile)
-                {
-                    batchDrops.Add(chest.drops);
-                }
-               // inset some output to .csv file
-            }
+        }
+        for(int i = 0; i < BatchGenerationCount; i++)
+        {
+            chest.drops = chest.GenerateLoot(chest.lootRarities, chest.lootCount);
             if(OutputToFile)
             {
-                outputToFile(OutputPath, batchDrops);
+                batchDrops.Add(chest.drops);
             }
+        }
+        if(OutputToFile)
+        {
+            outputToFile(OutputPath, batchDrops);
+        }
         return chest;
             
-    } 
+    }
+    // Takes in a list of chests outputs, where each chest output is stored as a List of gameItems and overwrites them into filePath
+    // List<List<gameItems> allows for batch generation output 
     public void outputToFile(string filePath, List<List<gameItem>> batchDrops)
     {
         
@@ -229,8 +232,18 @@ public class LootChest : MonoBehaviour
         }
     }
     
-    // This is the main function that generates the loot from the loot table. 
-    // GenerateLoot takes in an integer lootCount which defines how many items to generate from the loot table, and a Dictionary <string, int> for custom rarities. 
+    /* This is the main function that generates the loot from the loot table. 
+      Takes in a Dictionary of custom rarities and their corresponding weights, and an integer for how many items to generate from the loot table, 
+      outputs a list of gameItems corresponding to items in loot table
+     
+        Steps: 
+            1: Initialize selectedRarity dictionary and calculate weighted sum of rarities
+            2: Using weighted sum, generate a random number beftween 0 and sum.  
+            3: take previous generated number and subtract it from the next higest rarity. If the remaining number is >= next rarity repeat with next lowest rarity. 
+            4: If the number < next lowest rarity, then that is the selected rarity. 
+            5: When a rarity is selected add it to the output dictionary. If already existing increment it's counter. 
+            6: With the selected rarities, randomly select items from the loot table based on the number of items per rarity. 
+    */
     public List<gameItem> GenerateLoot(Dictionary<string, int> myRarity, int lootCount = 1 ) //
     {
         Dictionary <string, int> selectedRarity = new Dictionary<string, int>();
@@ -238,13 +251,12 @@ public class LootChest : MonoBehaviour
         System.Random rand = new System.Random();
         int weightedSum = 0;
 
-        // Initialize selectedRarity dictionary and calculate weighted sum of rarities
+        //Step 1
         foreach(var rarity in myRarity)
         {
             selectedRarity.Add(rarity.Key, 0);
             weightedSum += rarity.Value;
         }
-        //check if weight sum is 0 
         if(weightedSum <= 0) 
         {
             Debug.Log("Error: No loot available.");
@@ -253,24 +265,16 @@ public class LootChest : MonoBehaviour
 
         for(int i = 0; i < lootCount; i++) // number of items to gererate
         {
-            int roll = rand.Next(0,weightedSum); // roll random between 0 and sum of weights
+            //Step 2: 
+            int roll = rand.Next(0,weightedSum); 
 
-            //output += "initial roll: " + roll + " ";  // generate a random number beftween 0 and sum. Take that number and see where it falls in the weighted loot table. 
-            //take random generated number and subtract it from the next higest rarity. ex: 70 - 60(common) = 10. Then check if the remaining number is > next rarity. 
-            // 10 >= 10 so roll of 70 = uncommon. If the number is less than the next rarity, then that is the selected rarity.
+            //Step 3: 
             foreach(var rarity in myRarity)
             {
                 roll -= rarity.Value;
                 if(roll < 0)
                 {
-                    /*
-                    When a rarity is selected add it to the output dictionary. If already existing increment it's counter. 
-                    This allows for the multiple items of the same rarity to be displayed in a grouped fashion. Rather than 
-                    listed out individually based on the order they were selcted.  
-
-                    Ex: 2 Common, 1 Rare, 1 Epic rather than Common, Rare, Common, Epic
-                    
-                    */
+                    //Step 5
                     if(selectedRarity.ContainsKey(rarity.Key))
                     {
                         selectedRarity[rarity.Key] += 1;
@@ -283,7 +287,7 @@ public class LootChest : MonoBehaviour
                 }
             }
         }
-        // With the selected rarities, randomly select items from the loot table based on the number of items per rarity. 
+        // Step 6: 
         foreach(var r in selectedRarity)
         {
             for(int i = 0; i < r.Value; i++)
@@ -298,8 +302,8 @@ public class LootChest : MonoBehaviour
 
     // closes the Chest's UI output Window
     public void closeOutputWindow()
-{
-    Chest_OutputUI.SetActive(false);
-}
+    {
+        Chest_OutputUI.SetActive(false);
+    }
 }
 
