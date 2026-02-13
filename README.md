@@ -6,7 +6,7 @@ This tool provides a 3D Unity Loot Chest package that can be dragged and dropped
 
 ## **How to Import in Project**
 To import this tool into your Unity project, follow this video:  
-[https://www.youtube.com/watch?v=bl6nvZ_fGcU](url)
+[[https://www.youtube.com/watch?v=bl6nvZ_fGcU](https://youtu.be/bl6nvZ_fGcU?si=DDkZHxjzCl4HszTC)](url)
 
 ## **How to Use**
 
