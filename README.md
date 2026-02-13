@@ -5,7 +5,8 @@
 This tool provides a 3D Unity Loot Chest package that can be dragged and dropped into a Unity map project. Upon opening, the chest will procedurally generate Loot Drops from a weighted, customizable loot table and display the outputs to a Unity UI Canvas. 
 
 ## **How to Import in Project**
-
+To import this tool into your Unity project, follow this video:  
+[https://youtu.be/bl6nvZ_fGcU](url)
 
 ## **How to Use**
 
