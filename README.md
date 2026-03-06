@@ -54,8 +54,9 @@ This ensures that inserting a new weight doesn't force all other weights to have
 ## **Parameter Explanation**
 This tool incorporates a variety of adjustable parameters that can be edited through the Chest's Inspector tab in Unity. 
 
-1: Custom Loot Table .csv Pathway  
+1: Custom Loot Table .csv Pathway
 - Within the .csv file, the names of rarities, the list of items, item categories, and item descriptions can all be customized as desired.  /
+- **The Parameter in the Unity Inspector is not the file itself, but rather the location pathway of where the file is located**
 2: The number of batch Generations   
 3: The number of items the chest will generate  
 4: A bool value for whether the chest is allowed to regenerate its loot 
